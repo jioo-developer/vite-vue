@@ -1,6 +1,6 @@
 <template>
   <div id="container">
-    <div class="wrap">
+    <div class="wrap" v-if="loadData">
       <div class="box" v-for="(items, boxIndex) in imgArr" :key="boxIndex">
         <img
           v-for="(item, index) in items"
@@ -16,44 +16,42 @@
 </template>
 
 <script>
+import { ref, onMounted, watch, nextTick } from "vue";
+
 export default {
-  data() {
-    return {
-      imgArr: [],
-      imgwidth: [],
-    };
-  },
-  mounted() {
-    this.loadImage();
-  },
-  methods: {
-    async loadImage() {
+  setup() {
+    const imgArr = ref([]);
+    const imgwidth = ref([]);
+    const loadData = ref(false);
+
+    onMounted(async () => {
+      await loadImage();
+      nextTick(() => diagonalSlide());
+    });
+
+    async function loadImage() {
       try {
         const response = await fetch(
           "https://picsum.photos/v2/list?page=2&limit=32"
         );
         const data = await response.json();
-        this.splitImageGroup(data);
-        this.$nextTick(() => this.diagonalSlide());
+        for (let i = 0; i < data.length; i += 8) {
+          imgArr.value.push(data.slice(i, i + 8));
+        }
+        if (imgArr.value.length > 0) {
+          loadData.value = true;
+        }
       } catch (error) {
         console.error("Failed to fetch images:", error);
       }
-    },
-    splitImageGroup(value) {
-      // 이미지 배열의 길이가 0이 아닌 경우에만 그룹화 로직 수행
-      if (value.length > 0) {
-        const result = [];
-        for (let i = 0; i < value.length; i += 8) {
-          result.push(value.slice(i, i + 8));
-        }
-        this.imgArr = result;
-      }
-    },
-    handleImageLoad(event) {
+    }
+
+    function handleImageLoad(event) {
       const imgElement = event.target;
-      this.imgwidth.push(imgElement.clientWidth);
-    },
-    diagonalSlide() {
+      imgwidth.value.push(imgElement.clientWidth);
+    }
+
+    function diagonalSlide() {
       const el = Array.from(document.querySelectorAll(".box .item"));
       let itemLeft = 0;
       let itemSize = 0;
@@ -61,7 +59,18 @@ export default {
         getComputedStyle(document.documentElement).fontSize
       );
       const itemGap = 0.43 * fontSize;
-    },
+
+      console.log(el.length);
+      imgwidth.value.forEach((item) => console.log(item));
+    }
+
+    return {
+      imgArr,
+      imgwidth,
+      loadData,
+      handleImageLoad,
+      diagonalSlide,
+    };
   },
 };
 </script>
