@@ -70,17 +70,12 @@ export default {
     function slideMoveLogic(el, rememberLeft, imgSize, itemGap) {
       let first = 1;
       let last = el.length;
-      let count = 0;
-      console.log(rememberLeft);
-      console.log(-imgSize);
       el.forEach((item, index) => {
         if (rememberLeft[index] < -imgSize) {
           console.log("성공");
           const newLeft = rememberLeft[last - 1] + imgSize + itemGap;
           item.style.left = `${Math.floor(newLeft)}px`;
-          console.log(rememberLeft[index]);
           rememberLeft.splice(index, 1, newLeft);
-          console.log(rememberLeft[index]);
           first++;
           last++;
           if (last > el.length) last = 1;
@@ -98,6 +93,7 @@ export default {
       loadData,
       loadImage,
       handleImageLoad,
+      slideMoveLogic,
       imgPositionProperty,
     };
   },
