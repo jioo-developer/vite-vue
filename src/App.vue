@@ -8,7 +8,6 @@
           :src="`https://picsum.photos/id/${item.id}/200/300`"
           :alt="item.author"
           class="item"
-          @load="handleImageLoad"
         />
       </div>
     </div>
@@ -16,7 +15,7 @@
 </template>
 
 <script>
-import { ref, onMounted, watch, nextTick } from "vue";
+import { ref, onMounted, nextTick } from "vue";
 
 export default {
   setup() {
@@ -26,7 +25,7 @@ export default {
 
     onMounted(async () => {
       await loadImage();
-      nextTick(() => diagonalSlide());
+      nextTick(() => handleImageLoad());
     });
 
     async function loadImage() {
@@ -46,28 +45,29 @@ export default {
       }
     }
 
-    function handleImageLoad(event) {
-      const imgElement = event.target;
-      imgwidth.value.push(imgElement.clientWidth);
-    }
-
-    function diagonalSlide() {
+    function handleImageLoad() {
       const el = Array.from(document.querySelectorAll(".box .item"));
+      const width = el.map((item) => item.clientWidth);
+      diagonalSlide(width, el);
+    }
+    function diagonalSlide(value, arr) {
       let itemLeft = 0;
-      let itemSize = 0;
       const fontSize = parseFloat(
         getComputedStyle(document.documentElement).fontSize
       );
       const itemGap = 0.43 * fontSize;
-
-      console.log(el.length);
-      imgwidth.value.forEach((item) => console.log(item));
+      arr.forEach((item, index) => {
+        item.style.left = `${Math.floor(itemLeft)}px`;
+        itemLeft = itemLeft + value[index] + itemGap;
+        console.log(itemLeft);
+      });
     }
 
     return {
       imgArr,
       imgwidth,
       loadData,
+      loadImage,
       handleImageLoad,
       diagonalSlide,
     };
@@ -82,7 +82,7 @@ export default {
 #container {
   position: relative;
   width: 100%;
-  height: 25rem;
+  height: 100vh;
   overflow: hidden;
 }
 
