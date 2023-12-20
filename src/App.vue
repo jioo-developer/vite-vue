@@ -47,19 +47,48 @@ export default {
 
     function handleImageLoad() {
       const el = Array.from(document.querySelectorAll(".box .item"));
-      const width = el.map((item) => item.clientWidth);
-      diagonalSlide(width, el);
+      const width = el.map((item) => item.offsetWidth);
+      imgPositionProperty(width, el);
     }
-    function diagonalSlide(value, arr) {
+    function imgPositionProperty(value, arr) {
       let itemLeft = 0;
+      let imgSize = 0;
+      const rememberLeft = [];
       const fontSize = parseFloat(
         getComputedStyle(document.documentElement).fontSize
       );
       const itemGap = 0.43 * fontSize;
       arr.forEach((item, index) => {
+        rememberLeft.push(Math.floor(itemLeft));
         item.style.left = `${Math.floor(itemLeft)}px`;
         itemLeft = itemLeft + value[index] + itemGap;
-        console.log(itemLeft);
+        imgSize = value[index];
+      });
+      slideMoveLogic(arr, rememberLeft, imgSize, itemGap);
+    }
+
+    function slideMoveLogic(el, rememberLeft, imgSize, itemGap) {
+      let first = 1;
+      let last = el.length;
+      let count = 0;
+      console.log(rememberLeft);
+      console.log(-imgSize);
+      el.forEach((item, index) => {
+        if (rememberLeft[index] < -imgSize) {
+          console.log("성공");
+          const newLeft = rememberLeft[last - 1] + imgSize + itemGap;
+          item.style.left = `${Math.floor(newLeft)}px`;
+          console.log(rememberLeft[index]);
+          rememberLeft.splice(index, 1, newLeft);
+          console.log(rememberLeft[index]);
+          first++;
+          last++;
+          if (last > el.length) last = 1;
+          if (first > el.length) first = 1;
+        } else {
+          console.log("실패");
+          item.style.left = `${Math.floor(--rememberLeft[index])}px`;
+        }
       });
     }
 
@@ -69,7 +98,7 @@ export default {
       loadData,
       loadImage,
       handleImageLoad,
-      diagonalSlide,
+      imgPositionProperty,
     };
   },
 };
