@@ -70,21 +70,21 @@ export default {
     function slideMoveLogic(el, rememberLeft, imgSize, itemGap) {
       let first = 1;
       let last = el.length;
-      el.forEach((item, index) => {
-        if (rememberLeft[index] < -imgSize) {
-          console.log("성공");
-          const newLeft = rememberLeft[last - 1] + imgSize + itemGap;
-          item.style.left = `${Math.floor(newLeft)}px`;
-          rememberLeft.splice(index, 1, newLeft);
-          first++;
-          last++;
-          if (last > el.length) last = 1;
-          if (first > el.length) first = 1;
-        } else {
-          console.log("실패");
-          item.style.left = `${Math.floor(--rememberLeft[index])}px`;
-        }
-      });
+      setInterval(() => {
+        el.forEach((item, index) => {
+          if (rememberLeft[index] < -imgSize) {
+            const newLeft = rememberLeft[last - 1] + imgSize + itemGap;
+            item.style.left = `${Math.floor(newLeft)}px`;
+            rememberLeft.splice(index, 1, newLeft);
+            first++;
+            last++;
+            if (last > el.length) last = 1;
+            if (first > el.length) first = 1;
+          } else {
+            item.style.left = `${Math.floor(--rememberLeft[index])}px`;
+          }
+        });
+      }, 10);
     }
 
     return {
@@ -107,7 +107,7 @@ export default {
 #container {
   position: relative;
   width: 100%;
-  height: 100vh;
+  height: 25rem;
   overflow: hidden;
 }
 
