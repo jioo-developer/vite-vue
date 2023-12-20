@@ -25,7 +25,7 @@ export default {
 
     onMounted(async () => {
       await loadImage();
-      nextTick(() => handleImageLoad());
+      nextTick(() => imgPositionProperty());
     });
 
     async function loadImage() {
@@ -45,35 +45,32 @@ export default {
       }
     }
 
-    function handleImageLoad() {
-      const el = Array.from(document.querySelectorAll(".box .item"));
-      const width = el.map((item) => item.offsetWidth);
-      imgPositionProperty(width, el);
-    }
-    function imgPositionProperty(value, arr) {
+    function imgPositionProperty() {
       let itemLeft = 0;
-      let imgSize = 0;
+      let itemSize = 0;
       const rememberLeft = [];
+      const el = Array.from(document.querySelectorAll(".box .item"));
       const fontSize = parseFloat(
         getComputedStyle(document.documentElement).fontSize
       );
       const itemGap = 0.43 * fontSize;
-      arr.forEach((item, index) => {
+      el.forEach((item) => {
         rememberLeft.push(Math.floor(itemLeft));
-        item.style.left = `${Math.floor(itemLeft)}px`;
-        itemLeft = itemLeft + value[index] + itemGap;
-        imgSize = value[index];
+        console.log(itemLeft);
+        item.style.left = Math.floor(itemLeft) + "px";
+        itemLeft += item.offsetWidth + itemGap;
+        itemSize = item.offsetWidth;
       });
-      slideMoveLogic(arr, rememberLeft, imgSize, itemGap);
+      slideMoveLogic(el, rememberLeft, itemSize, itemGap);
     }
 
-    function slideMoveLogic(el, rememberLeft, imgSize, itemGap) {
+    function slideMoveLogic(el, rememberLeft, itemSize, itemGap) {
       let first = 1;
       let last = el.length;
       setInterval(() => {
         el.forEach((item, index) => {
-          if (rememberLeft[index] < -imgSize) {
-            const newLeft = rememberLeft[last - 1] + imgSize + itemGap;
+          if (rememberLeft[index] < -itemSize) {
+            const newLeft = rememberLeft[last - 1] + itemSize + itemGap;
             item.style.left = `${Math.floor(newLeft)}px`;
             rememberLeft.splice(index, 1, newLeft);
             first++;
@@ -92,7 +89,6 @@ export default {
       imgwidth,
       loadData,
       loadImage,
-      handleImageLoad,
       slideMoveLogic,
       imgPositionProperty,
     };
@@ -118,13 +114,9 @@ export default {
   height: 150%;
   /* 각도 조정 */
   transform: rotate(-114deg);
-  -webkit-transform: rotate(-114deg);
-  -moz-transform: rotate(-114deg);
-  -ms-transform: rotate(-114deg);
-  -o-transform: rotate(-114deg);
   /* 위치 조정 (선택사항) */
   top: -8rem;
-  left: -2.5rem;
+  left: -5.5rem;
 }
 
 #container > .wrap > .box {
@@ -142,6 +134,5 @@ export default {
   position: absolute;
   width: 7.5rem;
   height: 7.5rem;
-  transform: rotate(90deg); /* 이미지 세로로 보이게 변경 */
 }
 </style>
