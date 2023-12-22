@@ -18,7 +18,7 @@
         width: 150%;
         height: 150%;
         /* 각도 조정 */
-        transform: rotate(-114deg);
+        transform: rotate(-114deg) scale(1.12);
         /* 위치 조정 (선택사항) */
         top: -8rem;
         left: -4.5rem;
@@ -187,6 +187,11 @@
   <script>
     const boxes = Array.from(document.querySelectorAll(".box"));
     const boxes2 = Array.from(document.querySelectorAll(".box2"));
+    const boxMargin = parseInt(
+      window
+        .getComputedStyle(document.querySelector(".box"))
+        .getPropertyValue("margin-top")
+    );
     const itemGap =
       0.43 * parseFloat(getComputedStyle(document.documentElement).fontSize);
     const itemSize = 120;
@@ -236,7 +241,7 @@
 
       function animate() {
         items.forEach((item, index) => {
-          if (rememberLeft[index] > window.innerWidth * 1.1) {
+          if (rememberLeft[index] > window.outerWidth + boxMargin) {
             const newLeft = rememberLeft[first - 1] - itemSize - itemGap;
             item.style.left = newLeft + "px";
             rememberLeft[index] = newLeft;
