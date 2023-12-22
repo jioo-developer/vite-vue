@@ -18,7 +18,7 @@
         width: 150%;
         height: 150%;
         /* 각도 조정 */
-        transform: rotate(-114deg) scale(1.12);
+        transform: rotate(-114deg) scale(1.1);
         /* 위치 조정 (선택사항) */
         top: -8rem;
         left: -4.5rem;
@@ -196,7 +196,7 @@
     );
     const itemGap =
       0.43 * parseFloat(getComputedStyle(document.documentElement).fontSize);
-    const itemSize = 120;
+
     // 전역변수
     boxes2.forEach((item) => setProperty(item, rightMoveLogic));
     boxes.forEach((item) => setProperty(item, leftMoveLogic));
@@ -216,7 +216,7 @@
     function leftMoveLogic(items, itemLeft, rememberLeft) {
       let first = 1;
       let last = items.length;
-
+      const itemSize = items[0].clientWidth;
       function animate() {
         items.forEach((item, index) => {
           if (rememberLeft[index] < -itemSize) {
@@ -241,7 +241,7 @@
     function rightMoveLogic(items, itemLeft, rememberLeft) {
       let first = 1;
       let last = items.length;
-
+      const itemSize = items[0].clientWidth;
       function animate() {
         items.forEach((item, index) => {
           if (rememberLeft[index] > window.outerWidth + boxMargin) {
